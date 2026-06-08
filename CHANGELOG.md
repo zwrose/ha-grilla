@@ -8,6 +8,13 @@ From the first release onward, this file is maintained automatically by
 [Conventional Commits](https://www.conventionalcommits.org/) — please do not edit
 released sections by hand.
 
+## [0.2.2](https://github.com/zwrose/ha-grilla/compare/v0.2.1...v0.2.2) (2026-06-08)
+
+
+### Bug Fixes
+
+* create entities before opening the live stream ([16f81c7](https://github.com/zwrose/ha-grilla/commit/16f81c7f4d69432a62d268e7b48186f19b46f918))
+
 ## [0.2.1](https://github.com/zwrose/ha-grilla/compare/v0.2.0...v0.2.1) (2026-06-08)
 
 
