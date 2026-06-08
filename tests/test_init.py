@@ -4,6 +4,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 from aiogrilla import Grill, GrillaAuthError, GrillaConnectionError
 from homeassistant.config_entries import SOURCE_REAUTH, ConfigEntryState
+from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.grilla.const import CONF_EMAIL, CONF_REFRESH_TOKEN, DOMAIN
@@ -65,8 +66,9 @@ async def test_setup_disconnects_client_on_auth_failure(hass):
     client.async_disconnect.assert_awaited_once()
 
 
-async def test_setup_disconnects_client_on_connect_failure(hass):
-    """A connection failure during setup must close the client's session (no leak on retry)."""
+async def test_setup_loads_with_entities_despite_stream_connect_failure(hass):
+    """A transient stream-connect failure no longer fails setup: the entities are created
+    (showing unavailable) and the background task retries. Unload still closes the session."""
     entry = MockConfigEntry(
         domain=DOMAIN, data={CONF_REFRESH_TOKEN: "RE", CONF_EMAIL: "e@x"}, unique_id="sub"
     )
@@ -74,9 +76,15 @@ async def test_setup_disconnects_client_on_connect_failure(hass):
     client = _mock_client()
     client.async_connect = AsyncMock(side_effect=GrillaConnectionError("mqtt down"))
     with patch("custom_components.grilla.GrillaClient", return_value=client):
-        assert not await hass.config_entries.async_setup(entry.entry_id)
+        # Setup succeeds even though the live stream can't connect yet, and the entities
+        # are created (before the stream) rather than blocked behind the connect.
+        assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done()
-    assert entry.state is ConfigEntryState.SETUP_RETRY
+        assert entry.state is ConfigEntryState.LOADED
+        assert er.async_entries_for_config_entry(er.async_get(hass), entry.entry_id)
+        assert client.async_connect.await_count >= 1
+        # Unload closes the session (no leak) and cancels the retrying background task.
+        assert await hass.config_entries.async_unload(entry.entry_id)
     client.async_disconnect.assert_awaited_once()
 
 
