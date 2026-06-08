@@ -1,0 +1,26 @@
+[project]
+name = "ha-grilla"
+version = "0.1.0"
+requires-python = ">=3.13"
+
+[tool.ruff]
+line-length = 100
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC", "TID"]
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"boto3".msg = "ha-grilla must not import AWS SDKs directly; use aiogrilla."
+"awscrt".msg = "use aiogrilla."
+"awsiot".msg = "use aiogrilla."
+"botocore".msg = "use aiogrilla."
+"pycognito".msg = "use aiogrilla."
+
+[tool.pyright]
+include = ["custom_components", "tests"]
+pythonVersion = "3.13"
+venvPath = "."
+venv = ".venv"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]

@@ -1,0 +1,54 @@
+name: Bug report
+description: Report a problem with the Grilla Grills integration
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Please attach a **diagnostics** download
+        (Settings → Devices & Services → Grilla Grills → ⋮ → Download diagnostics);
+        it redacts credentials automatically. Do not paste raw tokens or account
+        identifiers.
+  - type: input
+    id: ha_version
+    attributes:
+      label: Home Assistant version
+      placeholder: "2026.2.0"
+    validations:
+      required: true
+  - type: input
+    id: integration_version
+    attributes:
+      label: ha-grilla version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: aiogrilla_version
+    attributes:
+      label: aiogrilla version
+      placeholder: "0.1.1"
+    validations:
+      required: false
+  - type: input
+    id: model
+    attributes:
+      label: Grill model (if known)
+      placeholder: "Silverbac 2.0 XL"
+    validations:
+      required: false
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output (redacted)
+      description: Remove account identifiers and tokens first.
+      render: text
+    validations:
+      required: false

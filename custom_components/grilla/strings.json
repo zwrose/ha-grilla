@@ -1,0 +1,92 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect your Grilla account",
+        "description": "Sign in with your Grilla / Alpha Connect app account. Your password is used once to obtain a token and is not stored.",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        },
+        "data_description": {
+          "email": "The email address for your Grilla app account.",
+          "password": "Your Grilla app password (used once to get a refresh token; not stored)."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate Grilla",
+        "description": "Re-enter the password for {email}.",
+        "data": {
+          "password": "Password"
+        }
+      },
+      "models": {
+        "title": "Choose your grill model",
+        "description": "Pick the exact model for each grill, or type your own. This is the model name shown for the device in Home Assistant."
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid authentication.",
+      "cannot_connect": "Failed to connect. Please try again."
+    },
+    "abort": {
+      "already_configured": "This Grilla account is already configured.",
+      "wrong_account": "Those credentials are for a different Grilla account than this entry.",
+      "reauth_successful": "Re-authentication was successful."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Grilla options",
+        "description": "Choose the model name shown for each grill."
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "grill_temp": { "name": "Grill temperature" },
+      "target_grill_temp": { "name": "Target grill temperature" },
+      "probe_temp": { "name": "Probe 1 temperature" },
+      "target_probe_temp": { "name": "Target probe 1 temperature" },
+      "probe2_temp": { "name": "Probe 2 temperature" },
+      "target_probe2_temp": { "name": "Target probe 2 temperature" },
+      "status": {
+        "name": "Status",
+        "state": {
+          "off": "Off",
+          "standby": "Standby",
+          "igniting": "Igniting",
+          "running": "Running",
+          "hold": "Holding",
+          "feed": "Feeding",
+          "manual": "Manual",
+          "shutdown": "Cooling down",
+          "paused": "Paused",
+          "done": "Done",
+          "idle": "Idle",
+          "error": "Error",
+          "unknown": "Unknown"
+        }
+      },
+      "cook_mode": {
+        "name": "Cook mode",
+        "state": {
+          "pid": "PID",
+          "pro": "Pro",
+          "unknown": "Unknown"
+        }
+      },
+      "cook_timer": { "name": "Cook timer" }
+    },
+    "binary_sensor": {
+      "problem": { "name": "Problem" },
+      "probe_present": { "name": "Probe 1 connected" },
+      "probe2_present": { "name": "Probe 2 connected" },
+      "connected": { "name": "Grill connected" }
+    },
+    "event": {
+      "alarm": { "name": "Alarm" }
+    }
+  }
+}

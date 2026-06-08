@@ -1,0 +1,13 @@
+{
+  "domain": "grilla",
+  "name": "Grilla Grills",
+  "codeowners": ["@zwrose"],
+  "config_flow": true,
+  "documentation": "https://github.com/zwrose/ha-grilla",
+  "integration_type": "hub",
+  "iot_class": "cloud_push",
+  "issue_tracker": "https://github.com/zwrose/ha-grilla/issues",
+  "loggers": ["aiogrilla", "awscrt", "awsiot", "pycognito", "boto3", "botocore"],
+  "requirements": ["aiogrilla>=0.1.1"],
+  "version": "0.1.0"
+}
