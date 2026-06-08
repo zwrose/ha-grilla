@@ -8,6 +8,18 @@ From the first release onward, this file is maintained automatically by
 [Conventional Commits](https://www.conventionalcommits.org/) — please do not edit
 released sections by hand.
 
+## [0.2.1](https://github.com/zwrose/ha-grilla/compare/v0.2.0...v0.2.1) (2026-06-08)
+
+
+### Bug Fixes
+
+* label the model picker by grill name with clearer help text ([a836dab](https://github.com/zwrose/ha-grilla/commit/a836dabf57574d65706184e157fd6f1b80c76537))
+
+
+### Documentation
+
+* replace paraphrased LICENSE with the verbatim Apache-2.0 text ([84f66d3](https://github.com/zwrose/ha-grilla/commit/84f66d3d75892b06216acc4e1a9dd4d1bcf06731))
+
 ## [0.2.0](https://github.com/zwrose/ha-grilla/compare/v0.1.0...v0.2.0) (2026-06-08)
 
 
