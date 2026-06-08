@@ -22,7 +22,7 @@
       },
       "models": {
         "title": "Choose your grill model",
-        "description": "Pick the exact model for each grill, or type your own. This is the model name shown for the device in Home Assistant."
+        "description": "Set the display name for each grill's device in Home Assistant. Pick a model from the list or type your own. You can change this any time from the integration's **Configure** option."
       }
     },
     "error": {
@@ -39,7 +39,7 @@
     "step": {
       "init": {
         "title": "Grilla options",
-        "description": "Choose the model name shown for each grill."
+        "description": "Update the display name for each grill's device. Pick a model from the list or type your own."
       }
     }
   },

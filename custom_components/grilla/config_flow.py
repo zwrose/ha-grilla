@@ -14,6 +14,8 @@ from .const import CONF_EMAIL, CONF_MODELS, CONF_REFRESH_TOKEN, DOMAIN, GRILLA_M
 from .helpers import model_name_for, resolve_model_name
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from aiogrilla import Grill
     from homeassistant.config_entries import ConfigEntry
 
@@ -28,6 +30,27 @@ def _model_selector() -> selector.SelectSelector:
             sort=False,
         )
     )
+
+
+def _model_picker(
+    grills: list[Grill], default_for: Callable[[Grill], str]
+) -> tuple[vol.Schema, dict[str, str]]:
+    """Build the per-grill model dropdown and a {field-label: grill-id} map.
+
+    Each grill's field is labelled by its name so the user sees a friendly name
+    (e.g. "Zamily Silverbac") instead of a raw device id, disambiguated with the id
+    only when two grills share a name. The map lets the submit handler translate the
+    labelled selections back to grill ids.
+    """
+    names = [grill.name or grill.id for grill in grills]
+    fields: dict[Any, Any] = {}
+    label_to_id: dict[str, str] = {}
+    for grill in grills:
+        base = grill.name or grill.id
+        label = base if names.count(base) == 1 else f"{base} ({grill.id})"
+        label_to_id[label] = grill.id
+        fields[vol.Optional(label, default=default_for(grill))] = _model_selector()
+    return vol.Schema(fields), label_to_id
 
 
 _PASSWORD_SELECTOR = selector.TextSelector(
@@ -77,18 +100,19 @@ class GrillaConfigFlow(ConfigFlow, domain=DOMAIN):
 
     async def async_step_models(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Per-grill model selection during onboarding (dropdown + free-text custom value)."""
+        schema, label_to_id = _model_picker(self._grills, resolve_model_name)
         if not self._grills or user_input is not None:
-            models = {gid: name for gid, name in (user_input or {}).items() if name}
+            models = {
+                label_to_id[label]: name
+                for label, name in (user_input or {}).items()
+                if name and label in label_to_id
+            }
             return self.async_create_entry(
                 title=self._email,
                 data={CONF_REFRESH_TOKEN: self._refresh, CONF_EMAIL: self._email},
                 options={CONF_MODELS: models},
             )
-        fields: dict[Any, Any] = {
-            vol.Optional(grill.id, default=resolve_model_name(grill)): _model_selector()
-            for grill in self._grills
-        }
-        return self.async_show_form(step_id="models", data_schema=vol.Schema(fields))
+        return self.async_show_form(step_id="models", data_schema=schema)
 
     async def async_step_reauth(self, entry_data: dict[str, Any]) -> ConfigFlowResult:
         """Start reauth (password-only; email is fixed from the existing entry)."""
@@ -140,12 +164,13 @@ class GrillaOptionsFlow(OptionsFlow):
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Show/store the per-grill model overrides (same picker as onboarding)."""
         grills = self.config_entry.runtime_data.grills
-        if user_input is not None:
-            models = {gid: name for gid, name in user_input.items() if name}
-            return self.async_create_entry(data={CONF_MODELS: models})
         options = self.config_entry.options
-        fields: dict[Any, Any] = {
-            vol.Optional(grill.id, default=model_name_for(grill, options)): _model_selector()
-            for grill in grills
-        }
-        return self.async_show_form(step_id="init", data_schema=vol.Schema(fields))
+        schema, label_to_id = _model_picker(grills, lambda g: model_name_for(g, options))
+        if user_input is not None:
+            models = {
+                label_to_id[label]: name
+                for label, name in user_input.items()
+                if name and label in label_to_id
+            }
+            return self.async_create_entry(data={CONF_MODELS: models})
+        return self.async_show_form(step_id="init", data_schema=schema)

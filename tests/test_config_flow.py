@@ -36,7 +36,7 @@ async def test_user_flow_success_then_model_step(hass):
         assert r["type"] is FlowResultType.FORM
         assert r["step_id"] == "models"
         r = await hass.config_entries.flow.async_configure(
-            r["flow_id"], {"sx1": "Silverbac 2.0 XL Built-In"}
+            r["flow_id"], {"Zamily": "Silverbac 2.0 XL Built-In"}
         )
         await hass.async_block_till_done()
     assert r["type"] is FlowResultType.CREATE_ENTRY
@@ -157,7 +157,7 @@ async def test_options_flow_stores_model(hass):
         result = await hass.config_entries.options.async_init(entry.entry_id)
         assert result["type"] is FlowResultType.FORM
         result = await hass.config_entries.options.async_configure(
-            result["flow_id"], {"sx1": "Silverbac XL"}
+            result["flow_id"], {"Zamily": "Silverbac XL"}
         )
         await hass.async_block_till_done()
     assert result["type"] is FlowResultType.CREATE_ENTRY
@@ -215,7 +215,9 @@ async def test_options_flow_tolerates_unknown_model(hass):
         await hass.async_block_till_done()
         result = await hass.config_entries.options.async_init(entry.entry_id)
         assert result["type"] is FlowResultType.FORM
-        result = await hass.config_entries.options.async_configure(result["flow_id"], {"sx9": ""})
+        result = await hass.config_entries.options.async_configure(
+            result["flow_id"], {"Mystery": ""}
+        )
         await hass.async_block_till_done()
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert entry.options.get(CONF_MODELS) == {}  # empty selection → no override stored
