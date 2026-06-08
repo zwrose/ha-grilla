@@ -22,7 +22,7 @@
       },
       "models": {
         "title": "Choose your grill model",
-        "description": "Set the display name for each grill's device in Home Assistant. Pick a model from the list or type your own. You can change this any time from the integration's **Configure** option."
+        "description": "Pick the **model** for each grill below — this sets the device's model in Home Assistant (the grill keeps its own name). Choose from the list or type a custom value, and change it later under **Configure**."
       }
     },
     "error": {
@@ -39,7 +39,7 @@
     "step": {
       "init": {
         "title": "Grilla options",
-        "description": "Update the display name for each grill's device. Pick a model from the list or type your own."
+        "description": "Update the **model** shown for each grill — this is the device's model in Home Assistant, not its name. Choose from the list or type a custom value."
       }
     }
   },
