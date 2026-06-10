@@ -8,6 +8,21 @@ From the first release onward, this file is maintained automatically by
 [Conventional Commits](https://www.conventionalcommits.org/) — please do not edit
 released sections by hand.
 
+## [0.2.3](https://github.com/zwrose/ha-grilla/compare/v0.2.2...v0.2.3) (2026-06-10)
+
+
+### Bug Fixes
+
+* clarify the model picker sets the device model, not its name ([#9](https://github.com/zwrose/ha-grilla/issues/9)) ([d766711](https://github.com/zwrose/ha-grilla/commit/d7667113803c52adbcb780ee3c2fd661f4264834))
+
+
+### Dependencies
+
+* **deps:** Bump actions/checkout from 4.3.1 to 6.0.3 ([#4](https://github.com/zwrose/ha-grilla/issues/4)) ([2e16d4f](https://github.com/zwrose/ha-grilla/commit/2e16d4f6f280e29b76e0615337a63782fe1977ac))
+* **deps:** Bump actions/setup-python from 5.6.0 to 6.2.0 ([#3](https://github.com/zwrose/ha-grilla/issues/3)) ([0567cf7](https://github.com/zwrose/ha-grilla/commit/0567cf782f3c4c3fc8da3432be792bf5585a3b70))
+* **deps:** Bump gitleaks/gitleaks-action from 2.3.9 to 3.0.0 ([#2](https://github.com/zwrose/ha-grilla/issues/2)) ([db44741](https://github.com/zwrose/ha-grilla/commit/db4474180192771ed27d50b34f10d554d61eb939))
+* **deps:** Bump googleapis/release-please-action from 4.4.1 to 5.0.0 ([#5](https://github.com/zwrose/ha-grilla/issues/5)) ([946c99f](https://github.com/zwrose/ha-grilla/commit/946c99fe13ab71d07120ee0ab73f1cb5d8e48c2f))
+
 ## [0.2.2](https://github.com/zwrose/ha-grilla/compare/v0.2.1...v0.2.2) (2026-06-08)
 
 
