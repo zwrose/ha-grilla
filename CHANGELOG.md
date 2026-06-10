@@ -8,6 +8,13 @@ From the first release onward, this file is maintained automatically by
 [Conventional Commits](https://www.conventionalcommits.org/) — please do not edit
 released sections by hand.
 
+## [0.2.4](https://github.com/zwrose/ha-grilla/compare/v0.2.3...v0.2.4) (2026-06-10)
+
+
+### Dependencies
+
+* Bump home-assistant/actions ([#13](https://github.com/zwrose/ha-grilla/issues/13)) ([fd120fa](https://github.com/zwrose/ha-grilla/commit/fd120fa300c320372cb6d06261af670b3da137a0))
+
 ## [0.2.3](https://github.com/zwrose/ha-grilla/compare/v0.2.2...v0.2.3) (2026-06-10)
 
 

@@ -1,6 +1,6 @@
 [project]
 name = "ha-grilla"
-version = "0.2.3"
+version = "0.2.4"
 requires-python = ">=3.13"
 
 [tool.ruff]
