@@ -1,7 +1,7 @@
 # ha-grilla
 
-[![GitHub Release](https://img.shields.io/github/release/zwrose/ha-grilla.svg?style=for-the-badge)](https://github.com/zwrose/ha-grilla/releases)
-[![License](https://img.shields.io/github/license/zwrose/ha-grilla.svg?style=for-the-badge)](LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/release/zwrose/ha-grilla?style=for-the-badge)](https://github.com/zwrose/ha-grilla/releases)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue?style=for-the-badge)](LICENSE)
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)
 [![CI](https://img.shields.io/github/actions/workflow/status/zwrose/ha-grilla/ci.yml?branch=main&style=for-the-badge)](https://github.com/zwrose/ha-grilla/actions/workflows/ci.yml)
 
@@ -52,6 +52,20 @@ disconnected state).
 **Events**
 
 - Alarm — fires on new error codes and on temperature-range breaches (rising edges only)
+
+## Tested hardware
+
+So far this integration has been verified against a **single grill**:
+
+| Model | Controller | Firmware |
+| --- | --- | --- |
+| Grilla Silverbac 2.0 XL Built-In | Alpha Connect 2.0 | 1.0.70 |
+
+Grilla's other connected grills use the same Alpha Connect cloud service, so they
+**should** work too — but that hasn't been confirmed. **If you own a different
+model, please give it a try and [open an issue](https://github.com/zwrose/ha-grilla/issues/new?template=compatibility_report.yml)
+with your results** — your grill's model and firmware, what works, and anything
+that looks wrong. Reports from other owners are how this list grows.
 
 ## Requirements
 

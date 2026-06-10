@@ -1,0 +1,67 @@
+name: Compatibility report
+description: Share how the integration works (or doesn't) with your Grilla grill — any model welcome
+labels: ["compatibility"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help confirm which grills this integration works with. Reports from owners of
+        models **other than** the Silverbac 2.0 XL Built-In are especially valuable. A
+        **diagnostics** download (Settings → Devices & Services → Grilla Grills → ⋮ →
+        Download diagnostics) redacts credentials automatically and is the best thing to
+        attach.
+  - type: input
+    id: model
+    attributes:
+      label: Grill model
+      description: The product name, e.g. "Grilla Silverbac" or "Kong".
+      placeholder: "Grilla Silverbac"
+    validations:
+      required: true
+  - type: input
+    id: model_code
+    attributes:
+      label: Model code (if known)
+      description: The code shown in diagnostics, e.g. "silverbacxl".
+      placeholder: "silverbacxl"
+    validations:
+      required: false
+  - type: input
+    id: firmware
+    attributes:
+      label: Firmware version (if known)
+      placeholder: "1.0.70"
+    validations:
+      required: false
+  - type: input
+    id: integration_version
+    attributes:
+      label: ha-grilla version
+      placeholder: "0.2.4"
+    validations:
+      required: true
+  - type: dropdown
+    id: result
+    attributes:
+      label: Overall result
+      options:
+        - "Works — entities populate correctly"
+        - "Mostly works — some entities wrong or missing"
+        - "Doesn't work"
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: What works / what doesn't
+      description: Which entities look correct (temperatures, status, cook mode, timer, probes) and which look wrong or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics or redacted sample (optional)
+      description: Attach a diagnostics download, or paste a redacted grill_state payload.
+      render: text
+    validations:
+      required: false
