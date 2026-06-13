@@ -58,6 +58,7 @@
           "standby": "Standby",
           "igniting": "Igniting",
           "running": "Running",
+          "stable": "Stable",
           "hold": "Holding",
           "feed": "Feeding",
           "manual": "Manual",
