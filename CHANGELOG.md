@@ -8,6 +8,13 @@ From the first release onward, this file is maintained automatically by
 [Conventional Commits](https://www.conventionalcommits.org/) — please do not edit
 released sections by hand.
 
+## [0.2.5](https://github.com/zwrose/ha-grilla/compare/v0.2.4...v0.2.5) (2026-06-13)
+
+
+### Bug Fixes
+
+* add 'stable' status state translation ([#16](https://github.com/zwrose/ha-grilla/issues/16)) ([64b1407](https://github.com/zwrose/ha-grilla/commit/64b1407a4c0d50999a4f5c57ec01cc6304e4de34))
+
 ## [0.2.4](https://github.com/zwrose/ha-grilla/compare/v0.2.3...v0.2.4) (2026-06-10)
 
 
