@@ -8,6 +8,21 @@ From the first release onward, this file is maintained automatically by
 [Conventional Commits](https://www.conventionalcommits.org/) — please do not edit
 released sections by hand.
 
+## [0.2.6](https://github.com/zwrose/ha-grilla/compare/v0.2.5...v0.2.6) (2026-09-02)
+
+
+### Bug Fixes
+
+* require aiogrilla 0.2.4 for the vendor's new IoT client-id policy ([#28](https://github.com/zwrose/ha-grilla/issues/28)) ([2207e71](https://github.com/zwrose/ha-grilla/commit/2207e7109b66a271c4476f4895beee84099c5886))
+
+
+### Dependencies
+
+* Bump actions/checkout from 6.0.3 to 7.0.0 ([#20](https://github.com/zwrose/ha-grilla/issues/20)) ([b631277](https://github.com/zwrose/ha-grilla/commit/b631277500d39ebcadef1ef301ff1cc21336315e))
+* Bump actions/setup-python from 6.2.0 to 7.0.0 ([#23](https://github.com/zwrose/ha-grilla/issues/23)) ([7e745f8](https://github.com/zwrose/ha-grilla/commit/7e745f89c649f3582c34592a4b94d51763bb0805))
+* Bump home-assistant/actions ([#18](https://github.com/zwrose/ha-grilla/issues/18)) ([4345f91](https://github.com/zwrose/ha-grilla/commit/4345f910f19fc57f71fb2ab4c0a27c65b8c7447f))
+* Bump home-assistant/actions/hassfest ([#27](https://github.com/zwrose/ha-grilla/issues/27)) ([393102d](https://github.com/zwrose/ha-grilla/commit/393102de64e2fd7b7c04de70c259300e56723aa7))
+
 ## [0.2.5](https://github.com/zwrose/ha-grilla/compare/v0.2.4...v0.2.5) (2026-06-13)
 
 
