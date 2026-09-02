@@ -18,7 +18,7 @@
     "botocore"
   ],
   "requirements": [
-    "aiogrilla>=0.2.3"
+    "aiogrilla>=0.2.4"
   ],
   "version": "0.2.5"
 }
