@@ -26,10 +26,9 @@ async def _async_update_listener(hass: HomeAssistant, entry: GrillaConfigEntry) 
 
 async def async_setup_entry(hass: HomeAssistant, entry: GrillaConfigEntry) -> bool:
     """Set up Grilla from a config entry."""
-    client = GrillaClient(
-        refresh_token=entry.data[CONF_REFRESH_TOKEN],
-        client_suffix=entry.entry_id,  # full entry_id: stable, per-entry, persisted
-    )
+    # No client_suffix: since aiogrilla 0.2.4 the MQTT client id is fixed by the vendor's
+    # IoT policy (the Cognito identity UUID) and the suffix parameter is ignored.
+    client = GrillaClient(refresh_token=entry.data[CONF_REFRESH_TOKEN])
 
     @callback
     def _on_auth_failed() -> None:
