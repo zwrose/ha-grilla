@@ -108,3 +108,15 @@ async def test_auth_failed_callback_starts_reauth(hass):
         DOMAIN, match_context={"source": SOURCE_REAUTH}
     )
     assert len(flows) == 1, "on_auth_failed must start exactly one reauth flow"
+
+
+async def test_setup_enables_client_heartbeat(hass):
+    """The client publishes the app's heartbeat so the grill knows someone is watching."""
+    entry = MockConfigEntry(
+        domain=DOMAIN, data={CONF_REFRESH_TOKEN: "RE", CONF_EMAIL: "e@x"}, unique_id="sub"
+    )
+    entry.add_to_hass(hass)
+    with patch("custom_components.grilla.GrillaClient", return_value=_mock_client()) as cls:
+        assert await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+    assert cls.call_args.kwargs["heartbeat"] is True
