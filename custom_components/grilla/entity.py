@@ -51,7 +51,11 @@ class GrillaEntity(CoordinatorEntity[GrillaCoordinator]):
         data = self.coordinator.data
         if data is None or data.fw_version is None:
             return
+        if self.device_entry is None:
+            return
+        # Look up this entity's own device by id: identifier lookups are deprecated
+        # (identifiers aren't unique across config entries), and device_entry may be stale.
         registry = dr.async_get(self.hass)
-        device = registry.async_get_device(identifiers={(DOMAIN, self.coordinator.grill.id)})
+        device = registry.async_get(self.device_entry.id)
         if device is not None and device.sw_version != data.fw_version:
             registry.async_update_device(device.id, sw_version=data.fw_version)
