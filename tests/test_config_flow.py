@@ -237,3 +237,43 @@ async def test_user_flow_shares_ha_client_session(hass):
             r["flow_id"], {CONF_EMAIL: "e@x.com", "password": "pw"}
         )
     assert cls.call_args.kwargs["session"] is async_get_clientsession(hass)
+
+
+async def test_reauth_reloads_loaded_entry_once(hass):
+    """A successful reauth on a loaded entry reloads it exactly once."""
+    entry = MockConfigEntry(
+        domain=DOMAIN, data={CONF_REFRESH_TOKEN: "old", CONF_EMAIL: "e@x"}, unique_id="sub-123"
+    )
+    entry.add_to_hass(hass)
+    with (
+        patch(
+            "custom_components.grilla.config_flow.GrillaClient", return_value=_client(sub="sub-123")
+        ),
+        patch("custom_components.grilla.GrillaClient", return_value=_setup_client()) as setup_cls,
+    ):
+        assert await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+        assert setup_cls.call_count == 1
+
+        r = await entry.start_reauth_flow(hass)
+        r = await hass.config_entries.flow.async_configure(r["flow_id"], {"password": "newpw"})
+        await hass.async_block_till_done()
+    assert r["reason"] == "reauth_successful"
+    assert setup_cls.call_count == 2  # one reload, not one per update path
+
+
+async def test_options_change_reloads_entry_once(hass):
+    """Saving new options reloads the entry once so the device model updates."""
+    entry = MockConfigEntry(
+        domain=DOMAIN, data={CONF_REFRESH_TOKEN: "RE", CONF_EMAIL: "e@x"}, unique_id="sub-123"
+    )
+    entry.add_to_hass(hass)
+    with patch("custom_components.grilla.GrillaClient", return_value=_setup_client()) as setup_cls:
+        assert await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+        result = await hass.config_entries.options.async_init(entry.entry_id)
+        await hass.config_entries.options.async_configure(
+            result["flow_id"], {"Zamily": "Silverbac XL"}
+        )
+        await hass.async_block_till_done()
+    assert setup_cls.call_count == 2

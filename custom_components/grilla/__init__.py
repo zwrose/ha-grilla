@@ -20,11 +20,6 @@ _LOGGER = logging.getLogger(__name__)
 _CONNECT_RETRY_DELAY_S = 30.0
 
 
-async def _async_update_listener(hass: HomeAssistant, entry: GrillaConfigEntry) -> None:
-    """Reload the entry when its options change."""
-    await hass.config_entries.async_reload(entry.entry_id)
-
-
 async def async_setup_entry(hass: HomeAssistant, entry: GrillaConfigEntry) -> bool:
     """Set up Grilla from a config entry."""
     # No client_suffix: since aiogrilla 0.2.4 the MQTT client id is fixed by the vendor's
@@ -60,7 +55,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: GrillaConfigEntry) -> bo
         client.on_availability(grill.id, coord.handle_availability)
 
     entry.runtime_data = GrillaRuntimeData(client=client, grills=grills, coordinators=coordinators)
-    entry.async_on_unload(entry.add_update_listener(_async_update_listener))
 
     # Create the entities now -- they start 'unavailable' (availability mirrors the grill
     # connection) and come alive as telemetry arrives -- so the device's entities appear

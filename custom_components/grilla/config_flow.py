@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 
 import voluptuous as vol
 from aiogrilla import GrillaAuthError, GrillaClient, GrillaConnectionError
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlow
+from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlowWithReload
 from homeassistant.core import callback
 from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -162,8 +162,8 @@ class GrillaConfigFlow(ConfigFlow, domain=DOMAIN):
         return GrillaOptionsFlow()
 
 
-class GrillaOptionsFlow(OptionsFlow):
-    """Let the user override each grill's displayed model name."""
+class GrillaOptionsFlow(OptionsFlowWithReload):
+    """Let the user override each grill's displayed model name (reloads on save)."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Show/store the per-grill model overrides (same picker as onboarding)."""
