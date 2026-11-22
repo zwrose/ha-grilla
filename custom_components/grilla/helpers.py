@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 
 from aiogrilla.const import MODEL_NAMES
 
-from .const import CONF_MODELS
+from .const import CONF_MODELS, SINGLE_PROBE_MODELS
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -31,3 +31,13 @@ def model_name_for(grill: Grill, options: Mapping[str, Any] | None) -> str:
     falls back to :func:`resolve_model_name` for unmapped/empty controller codes.
     """
     return resolve_model_name(grill, ((options or {}).get(CONF_MODELS) or {}).get(grill.id))
+
+
+def has_second_probe(grill: Grill) -> bool:
+    """Return whether the grill's controller has a second meat-probe port.
+
+    Mirrors the Grilla app, which shows probe 2 only for models whose dashboard card
+    is ``three-readings``. Unlike the app, an unknown or empty controller code keeps
+    probe 2, so a new two-probe model is never hidden by mistake.
+    """
+    return grill.model.casefold() not in SINGLE_PROBE_MODELS

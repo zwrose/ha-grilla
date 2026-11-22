@@ -14,13 +14,14 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.const import EntityCategory, UnitOfTemperature
+from homeassistant.const import EntityCategory, Platform, UnitOfTemperature
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.util import dt as dt_util
 
 from .coordinator import GrillaCoordinator
-from .entity import GrillaEntity
+from .entity import GrillaEntity, async_remove_entity
+from .helpers import has_second_probe
 from .models import GrillaConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
@@ -33,6 +34,7 @@ class GrillaSensorEntityDescription(SensorEntityDescription):
     """Sensor description with a value extractor."""
 
     value_fn: Callable[[GrillState], float | str | None]
+    requires_probe2: bool = False
 
 
 SENSORS: tuple[GrillaSensorEntityDescription, ...] = (
@@ -68,6 +70,7 @@ SENSORS: tuple[GrillaSensorEntityDescription, ...] = (
     ),
     GrillaSensorEntityDescription(
         key="probe2_temp",
+        requires_probe2=True,
         translation_key="probe2_temp",
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -76,6 +79,7 @@ SENSORS: tuple[GrillaSensorEntityDescription, ...] = (
     ),
     GrillaSensorEntityDescription(
         key="target_probe2_temp",
+        requires_probe2=True,
         translation_key="target_probe2_temp",
         device_class=SensorDeviceClass.TEMPERATURE,
         suggested_display_precision=0,
@@ -107,7 +111,12 @@ async def async_setup_entry(
     """Set up Grilla sensors."""
     entities: list[SensorEntity] = []
     for coordinator in entry.runtime_data.coordinators.values():
-        entities += [GrillaSensor(coordinator, description) for description in SENSORS]
+        probe2 = has_second_probe(coordinator.grill)
+        for description in SENSORS:
+            if description.requires_probe2 and not probe2:
+                async_remove_entity(hass, Platform.SENSOR, coordinator, description.key)
+            else:
+                entities.append(GrillaSensor(coordinator, description))
         entities.append(GrillaTimerSensor(coordinator))
     async_add_entities(entities)
 
