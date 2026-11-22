@@ -108,3 +108,17 @@ async def test_auth_failed_callback_starts_reauth(hass):
         DOMAIN, match_context={"source": SOURCE_REAUTH}
     )
     assert len(flows) == 1, "on_auth_failed must start exactly one reauth flow"
+
+
+async def test_setup_shares_ha_client_session(hass):
+    """The client reuses HA's shared aiohttp session instead of opening its own."""
+    from homeassistant.helpers.aiohttp_client import async_get_clientsession
+
+    entry = MockConfigEntry(
+        domain=DOMAIN, data={CONF_REFRESH_TOKEN: "RE", CONF_EMAIL: "e@x"}, unique_id="sub"
+    )
+    entry.add_to_hass(hass)
+    with patch("custom_components.grilla.GrillaClient", return_value=_mock_client()) as cls:
+        assert await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+    assert cls.call_args.kwargs["session"] is async_get_clientsession(hass)

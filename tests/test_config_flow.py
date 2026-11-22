@@ -221,3 +221,19 @@ async def test_options_flow_tolerates_unknown_model(hass):
         await hass.async_block_till_done()
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert entry.options.get(CONF_MODELS) == {}  # empty selection → no override stored
+
+
+async def test_user_flow_shares_ha_client_session(hass):
+    """The login client reuses HA's shared aiohttp session."""
+    from homeassistant.helpers.aiohttp_client import async_get_clientsession
+
+    with patch(
+        "custom_components.grilla.config_flow.GrillaClient", return_value=_client(ok=False)
+    ) as cls:
+        r = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+        await hass.config_entries.flow.async_configure(
+            r["flow_id"], {CONF_EMAIL: "e@x.com", "password": "pw"}
+        )
+    assert cls.call_args.kwargs["session"] is async_get_clientsession(hass)

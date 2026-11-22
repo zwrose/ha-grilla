@@ -8,6 +8,7 @@ import logging
 from aiogrilla import GrillaAuthError, GrillaClient, GrillaConnectionError
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import CONF_REFRESH_TOKEN, PLATFORMS
 from .coordinator import GrillaCoordinator
@@ -28,7 +29,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: GrillaConfigEntry) -> bo
     """Set up Grilla from a config entry."""
     # No client_suffix: since aiogrilla 0.2.4 the MQTT client id is fixed by the vendor's
     # IoT policy (the Cognito identity UUID) and the suffix parameter is ignored.
-    client = GrillaClient(refresh_token=entry.data[CONF_REFRESH_TOKEN])
+    # Share HA's aiohttp session (the client only closes a session it created itself).
+    client = GrillaClient(
+        refresh_token=entry.data[CONF_REFRESH_TOKEN], session=async_get_clientsession(hass)
+    )
 
     @callback
     def _on_auth_failed() -> None:
