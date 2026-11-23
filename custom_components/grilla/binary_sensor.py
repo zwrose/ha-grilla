@@ -14,12 +14,13 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
     BinarySensorEntityDescription,
 )
-from homeassistant.const import EntityCategory
+from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .coordinator import GrillaCoordinator
-from .entity import GrillaEntity
+from .entity import GrillaEntity, async_remove_entity
+from .helpers import has_second_probe
 from .models import GrillaConfigEntry
 
 PARALLEL_UPDATES = 0
@@ -30,6 +31,7 @@ class GrillaBinaryDescription(BinarySensorEntityDescription):
     """Binary sensor description with a value extractor."""
 
     value_fn: Callable[[GrillState], bool]
+    requires_probe2: bool = False
 
 
 BINARY_SENSORS: tuple[GrillaBinaryDescription, ...] = (
@@ -47,6 +49,7 @@ BINARY_SENSORS: tuple[GrillaBinaryDescription, ...] = (
     ),
     GrillaBinaryDescription(
         key="probe2_present",
+        requires_probe2=True,
         translation_key="probe2_present",
         entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda s: s.probe2_temp is not None,
@@ -63,7 +66,12 @@ async def async_setup_entry(
     entities: list[BinarySensorEntity] = []
     for coordinator in entry.runtime_data.coordinators.values():
         entities.append(GrillaConnectivityBinarySensor(coordinator))
-        entities += [GrillaBinarySensor(coordinator, description) for description in BINARY_SENSORS]
+        probe2 = has_second_probe(coordinator.grill)
+        for description in BINARY_SENSORS:
+            if description.requires_probe2 and not probe2:
+                async_remove_entity(hass, Platform.BINARY_SENSOR, coordinator, description.key)
+            else:
+                entities.append(GrillaBinarySensor(coordinator, description))
     async_add_entities(entities)
 
 

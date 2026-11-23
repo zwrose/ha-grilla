@@ -2,14 +2,33 @@
 
 from __future__ import annotations
 
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
 from .coordinator import GrillaCoordinator
 from .helpers import model_name_for
+
+
+def entity_unique_id(coordinator: GrillaCoordinator, key: str) -> str:
+    """Return the unique id of a grill entity: ``<account>_<grill id>_<key>``."""
+    entry = coordinator.config_entry
+    assert entry is not None  # coordinator always has a config_entry (mandatory)
+    return f"{entry.unique_id}_{coordinator.grill.id}_{key}"
+
+
+@callback
+def async_remove_entity(
+    hass: HomeAssistant, platform: str, coordinator: GrillaCoordinator, key: str
+) -> None:
+    """Remove a grill entity that this setup no longer creates from the entity registry."""
+    registry = er.async_get(hass)
+    entity_id = registry.async_get_entity_id(platform, DOMAIN, entity_unique_id(coordinator, key))
+    if entity_id is not None:
+        registry.async_remove(entity_id)
 
 
 class GrillaEntity(CoordinatorEntity[GrillaCoordinator]):
@@ -23,7 +42,7 @@ class GrillaEntity(CoordinatorEntity[GrillaCoordinator]):
         grill = coordinator.grill
         entry = coordinator.config_entry
         assert entry is not None  # coordinator always has a config_entry (mandatory)
-        self._attr_unique_id = f"{entry.unique_id}_{grill.id}_{key}"
+        self._attr_unique_id = entity_unique_id(coordinator, key)
         model = model_name_for(grill, entry.options)
         sw = coordinator.data.fw_version if coordinator.data else None
         self._attr_device_info = DeviceInfo(

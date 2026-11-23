@@ -36,8 +36,8 @@ disconnected state).
 - Target grill temperature
 - Probe temperature
 - Target probe temperature
-- Probe 2 temperature
-- Target probe 2 temperature
+- Probe 2 temperature (two-probe models only)
+- Target probe 2 temperature (two-probe models only)
 - Status (off / igniting / running / hold / shutdown, etc.)
 - Cook mode (smoke / grill / bake / etc.) — diagnostic
 - Cook timer (finish timestamp, while a timer is active)
@@ -47,7 +47,11 @@ disconnected state).
 - Grill connected (connectivity) — always available; reflects the cloud link state
 - Problem — on when the grill reports an error code
 - Probe connected — on when probe 1 is inserted
-- Probe 2 connected — on when probe 2 is inserted
+- Probe 2 connected — on when probe 2 is inserted (two-probe models only)
+
+The probe 2 entities are created only for models with a second probe port
+(Silverbac 2.0, Silverbac XL, Chimp 2.0, Mammoth). The original Grilla, Silverbac
+and Chimp, plus Kong and Pie-Ro, have one probe port.
 
 **Events**
 
@@ -55,11 +59,16 @@ disconnected state).
 
 ## Tested hardware
 
-So far this integration has been verified against a **single grill**:
+So far this integration has been verified against **two grills**:
 
 | Model | Controller | Firmware |
 | --- | --- | --- |
 | Grilla Silverbac 2.0 XL Built-In | Alpha Connect 2.0 | 1.0.70 |
+| Grilla Silverbac (original) | Alpha Connect | 1.0.8 |
+
+The original Silverbac currently sends data only while the Grilla app is open on a
+phone. Keeping it reporting without the app is being worked on in
+[aiogrilla#37](https://github.com/zwrose/aiogrilla/pull/37).
 
 Grilla's other connected grills use the same Alpha Connect cloud service, so they
 **should** work too — but that hasn't been confirmed. **If you own a different
