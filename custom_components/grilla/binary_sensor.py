@@ -8,7 +8,9 @@ from dataclasses import dataclass
 from aiogrilla import GrillState
 from aiogrilla.const import ERROR_CODE_NAMES
 from homeassistant.components.binary_sensor import (
-    BinarySensorDeviceClass,
+    # Current Home Assistant defines this in binary_sensor.const, a module the oldest
+    # supported version (2025.11) lacks, so it is imported from the package on both.
+    BinarySensorDeviceClass,  # pyright: ignore[reportPrivateImportUsage]
     BinarySensorEntity,
     BinarySensorEntityDescription,
 )
