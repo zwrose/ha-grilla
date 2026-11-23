@@ -168,7 +168,7 @@ async def test_sw_version_populates(hass: HomeAssistant, make_state) -> None:
 async def test_sw_version_sync_avoids_identifier_lookup(hass: HomeAssistant, make_state) -> None:
     """The sync finds the entity's own device by id, not the deprecated identifier lookup."""
     hass.config.units = US_CUSTOMARY_SYSTEM
-    _entry, cbs = await _setup(hass, make_state=make_state, push=False)
+    entry, cbs = await _setup(hass, make_state=make_state, push=False)
 
     with patch.object(
         dr.DeviceRegistry,
@@ -178,7 +178,7 @@ async def test_sw_version_sync_avoids_identifier_lookup(hass: HomeAssistant, mak
         cbs["state"](make_state(fw_version="1.0.71"))
         await hass.async_block_till_done()
 
-    device = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, "sx1")})
+    device = _device(hass, entry)
     assert device is not None
     assert device.sw_version == "1.0.71"
 
