@@ -56,6 +56,9 @@ def _model_picker(
 _PASSWORD_SELECTOR = selector.TextSelector(
     selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
 )
+# Current Home Assistant types a form's data_schema as probatio.Schema. The oldest
+# supported version (2025.11) ships only voluptuous, which Home Assistant still accepts
+# at runtime, so the forms keep voluptuous schemas and silence the type mismatch.
 USER_SCHEMA = vol.Schema(
     {vol.Required(CONF_EMAIL): str, vol.Required("password"): _PASSWORD_SELECTOR}
 )
@@ -96,7 +99,7 @@ class GrillaConfigFlow(ConfigFlow, domain=DOMAIN):
                     return await self.async_step_models()
             finally:
                 await client.async_disconnect()
-        return self.async_show_form(step_id="user", data_schema=USER_SCHEMA, errors=errors)
+        return self.async_show_form(step_id="user", data_schema=USER_SCHEMA, errors=errors)  # pyright: ignore[reportArgumentType]
 
     async def async_step_models(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Per-grill model selection during onboarding (dropdown + free-text custom value)."""
@@ -112,7 +115,7 @@ class GrillaConfigFlow(ConfigFlow, domain=DOMAIN):
                 data={CONF_REFRESH_TOKEN: self._refresh, CONF_EMAIL: self._email},
                 options={CONF_MODELS: models},
             )
-        return self.async_show_form(step_id="models", data_schema=schema)
+        return self.async_show_form(step_id="models", data_schema=schema)  # pyright: ignore[reportArgumentType]
 
     async def async_step_reauth(self, entry_data: dict[str, Any]) -> ConfigFlowResult:
         """Start reauth (password-only; email is fixed from the existing entry)."""
@@ -146,7 +149,7 @@ class GrillaConfigFlow(ConfigFlow, domain=DOMAIN):
                 await client.async_disconnect()
         return self.async_show_form(
             step_id="reauth_confirm",
-            data_schema=REAUTH_SCHEMA,
+            data_schema=REAUTH_SCHEMA,  # pyright: ignore[reportArgumentType]
             errors=errors,
             description_placeholders={"email": entry.data[CONF_EMAIL]},
         )
@@ -173,4 +176,4 @@ class GrillaOptionsFlow(OptionsFlow):
                 if name and label in label_to_id
             }
             return self.async_create_entry(data={CONF_MODELS: models})
-        return self.async_show_form(step_id="init", data_schema=schema)
+        return self.async_show_form(step_id="init", data_schema=schema)  # pyright: ignore[reportArgumentType]
