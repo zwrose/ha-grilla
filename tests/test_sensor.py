@@ -165,6 +165,24 @@ async def test_sw_version_populates(hass: HomeAssistant, make_state) -> None:
     assert device.sw_version == "1.0.70"
 
 
+async def test_sw_version_sync_avoids_identifier_lookup(hass: HomeAssistant, make_state) -> None:
+    """The sync finds the entity's own device by id, not the deprecated identifier lookup."""
+    hass.config.units = US_CUSTOMARY_SYSTEM
+    entry, cbs = await _setup(hass, make_state=make_state, push=False)
+
+    with patch.object(
+        dr.DeviceRegistry,
+        "async_get_device",
+        side_effect=AssertionError("deprecated identifier lookup used"),
+    ):
+        cbs["state"](make_state(fw_version="1.0.71"))
+        await hass.async_block_till_done()
+
+    device = _device(hass, entry)
+    assert device is not None
+    assert device.sw_version == "1.0.71"
+
+
 async def test_model_override(hass: HomeAssistant, make_state) -> None:
     """Model override in options replaces the default MODEL_NAMES lookup."""
     hass.config.units = US_CUSTOMARY_SYSTEM
