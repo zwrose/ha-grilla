@@ -8,6 +8,15 @@ From the first release onward, this file is maintained automatically by
 [Conventional Commits](https://www.conventionalcommits.org/) — please do not edit
 released sections by hand.
 
+## [0.2.7](https://github.com/zwrose/ha-grilla/compare/v0.2.6...v0.2.7) (2026-11-23)
+
+
+### Bug Fixes
+
+* look up the grill's device by id when syncing firmware ([#38](https://github.com/zwrose/ha-grilla/issues/38)) ([12a421d](https://github.com/zwrose/ha-grilla/commit/12a421df0ac1911a5bf39548232c4f942000dc49))
+* reload once after reauth and share HA's HTTP session ([#40](https://github.com/zwrose/ha-grilla/issues/40)) ([59133ad](https://github.com/zwrose/ha-grilla/commit/59133ad2ac644f9c8bee9446a9be26e7a0bd526f))
+* skip probe 2 entities on single-probe models ([#39](https://github.com/zwrose/ha-grilla/issues/39)) ([fe0a2f2](https://github.com/zwrose/ha-grilla/commit/fe0a2f254e844723189222b753c9b39f1e3cf647))
+
 ## [0.2.6](https://github.com/zwrose/ha-grilla/compare/v0.2.5...v0.2.6) (2026-09-02)
 
 
