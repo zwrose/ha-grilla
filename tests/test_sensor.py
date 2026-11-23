@@ -23,6 +23,16 @@ def _entity_id(hass: HomeAssistant, unique_id: str) -> str | None:
     return entry
 
 
+def _device(hass: HomeAssistant, entry: MockConfigEntry) -> dr.DeviceEntry | None:
+    """Find the grill's device among the config entry's devices.
+
+    Home Assistant deprecated ``async_get_device(identifiers=...)`` and raises when
+    test code calls it, so the tests search the entry's own devices instead.
+    """
+    devices = dr.async_entries_for_config_entry(dr.async_get(hass), entry.entry_id)
+    return next((d for d in devices if (DOMAIN, "sx1") in d.identifiers), None)
+
+
 async def _setup(
     hass: HomeAssistant,
     make_state=None,
@@ -63,11 +73,9 @@ async def _setup(
 async def test_device_created_when_off(hass: HomeAssistant, make_state) -> None:
     """Device and entities exist even when grill is off (no state pushed)."""
     hass.config.units = US_CUSTOMARY_SYSTEM
-    await _setup(hass, make_state=make_state, push=False)
+    entry, _cbs = await _setup(hass, make_state=make_state, push=False)
 
-    device_reg = dr.async_get(hass)
-    device = device_reg.async_get_device(identifiers={(DOMAIN, "sx1")})
-    assert device is not None
+    assert _device(hass, entry) is not None
 
     entity_id = _entity_id(hass, "sub_sx1_grill_temp")
     assert entity_id is not None
@@ -143,17 +151,16 @@ async def test_none_safe_when_off(hass: HomeAssistant, make_state) -> None:
 async def test_sw_version_populates(hass: HomeAssistant, make_state) -> None:
     """sw_version is None before first state; populates once state with fw_version arrives."""
     hass.config.units = US_CUSTOMARY_SYSTEM
-    _entry, cbs = await _setup(hass, make_state=make_state, push=False)
+    entry, cbs = await _setup(hass, make_state=make_state, push=False)
 
-    device_reg = dr.async_get(hass)
-    device = device_reg.async_get_device(identifiers={(DOMAIN, "sx1")})
+    device = _device(hass, entry)
     assert device is not None
     assert device.sw_version is None
 
     cbs["state"](make_state(fw_version="1.0.70"))
     await hass.async_block_till_done()
 
-    device = device_reg.async_get_device(identifiers={(DOMAIN, "sx1")})
+    device = _device(hass, entry)
     assert device is not None
     assert device.sw_version == "1.0.70"
 
@@ -161,14 +168,13 @@ async def test_sw_version_populates(hass: HomeAssistant, make_state) -> None:
 async def test_model_override(hass: HomeAssistant, make_state) -> None:
     """Model override in options replaces the default MODEL_NAMES lookup."""
     hass.config.units = US_CUSTOMARY_SYSTEM
-    await _setup(
+    entry, _cbs = await _setup(
         hass,
         make_state=make_state,
         push=True,
         options={CONF_MODELS: {"sx1": "My Custom Smoker"}},
     )
-    device_reg = dr.async_get(hass)
-    device = device_reg.async_get_device(identifiers={(DOMAIN, "sx1")})
+    device = _device(hass, entry)
     assert device is not None
     assert device.model == "My Custom Smoker"
 
@@ -176,10 +182,9 @@ async def test_model_override(hass: HomeAssistant, make_state) -> None:
 async def test_model_default_from_model_names(hass: HomeAssistant, make_state) -> None:
     """Without override, model comes from MODEL_NAMES ('silverbacxl' -> 'Silverbac XL')."""
     hass.config.units = US_CUSTOMARY_SYSTEM
-    await _setup(hass, make_state=make_state, push=True)
+    entry, _cbs = await _setup(hass, make_state=make_state, push=True)
 
-    device_reg = dr.async_get(hass)
-    device = device_reg.async_get_device(identifiers={(DOMAIN, "sx1")})
+    device = _device(hass, entry)
     assert device is not None
     assert device.model == "Silverbac XL"
 
