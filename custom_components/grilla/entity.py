@@ -57,5 +57,7 @@ class GrillaEntity(CoordinatorEntity[GrillaCoordinator]):
         # (identifiers aren't unique across config entries), and device_entry may be stale.
         registry = dr.async_get(self.hass)
         device = registry.async_get(self.device_entry.id)
-        if device is not None and device.sw_version != data.fw_version:
+        # Current Home Assistant can also return a child device here, which carries no
+        # sw_version; a grill is always a main device.
+        if isinstance(device, dr.DeviceEntry) and device.sw_version != data.fw_version:
             registry.async_update_device(device.id, sw_version=data.fw_version)
