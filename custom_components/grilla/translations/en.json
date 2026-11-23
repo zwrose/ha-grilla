@@ -39,7 +39,13 @@
     "step": {
       "init": {
         "title": "Grilla options",
-        "description": "Update the **model** shown for each grill — this is the device's model in Home Assistant, not its name. Choose from the list or type a custom value."
+        "description": "Update the **model** shown for each grill — this is the device's model in Home Assistant, not its name. Choose from the list or type a custom value.",
+        "data": {
+          "heartbeat": "Send client heartbeat"
+        },
+        "data_description": {
+          "heartbeat": "Send the heartbeat the Grilla app sends while it's open. Original-controller grills (such as the first Silverbac) stop reporting without it. Leave off otherwise."
+        }
       }
     }
   },

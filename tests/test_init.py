@@ -7,7 +7,12 @@ from homeassistant.config_entries import SOURCE_REAUTH, ConfigEntryState
 from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.grilla.const import CONF_EMAIL, CONF_REFRESH_TOKEN, DOMAIN
+from custom_components.grilla.const import (
+    CONF_EMAIL,
+    CONF_HEARTBEAT,
+    CONF_REFRESH_TOKEN,
+    DOMAIN,
+)
 
 
 def _mock_client():
@@ -110,13 +115,25 @@ async def test_auth_failed_callback_starts_reauth(hass):
     assert len(flows) == 1, "on_auth_failed must start exactly one reauth flow"
 
 
-async def test_setup_enables_client_heartbeat(hass):
-    """The client publishes the app's heartbeat so the grill knows someone is watching."""
+async def _setup_heartbeat_kwarg(hass, options):
     entry = MockConfigEntry(
-        domain=DOMAIN, data={CONF_REFRESH_TOKEN: "RE", CONF_EMAIL: "e@x"}, unique_id="sub"
+        domain=DOMAIN,
+        data={CONF_REFRESH_TOKEN: "RE", CONF_EMAIL: "e@x"},
+        options=options,
+        unique_id="sub",
     )
     entry.add_to_hass(hass)
     with patch("custom_components.grilla.GrillaClient", return_value=_mock_client()) as cls:
         assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done()
-    assert cls.call_args.kwargs["heartbeat"] is True
+    return cls.call_args.kwargs["heartbeat"]
+
+
+async def test_heartbeat_off_by_default(hass):
+    """Without the option, the client doesn't publish the app's heartbeat."""
+    assert await _setup_heartbeat_kwarg(hass, {}) is False
+
+
+async def test_heartbeat_option_enables_client_heartbeat(hass):
+    """With the option on, the client publishes the app's heartbeat."""
+    assert await _setup_heartbeat_kwarg(hass, {CONF_HEARTBEAT: True}) is True

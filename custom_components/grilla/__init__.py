@@ -9,7 +9,7 @@ from aiogrilla import GrillaAuthError, GrillaClient, GrillaConnectionError
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 
-from .const import CONF_REFRESH_TOKEN, PLATFORMS
+from .const import CONF_HEARTBEAT, CONF_REFRESH_TOKEN, PLATFORMS
 from .coordinator import GrillaCoordinator
 from .models import GrillaConfigEntry, GrillaRuntimeData
 
@@ -28,8 +28,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: GrillaConfigEntry) -> bo
     """Set up Grilla from a config entry."""
     # No client_suffix: since aiogrilla 0.2.4 the MQTT client id is fixed by the vendor's
     # IoT policy (the Cognito identity UUID) and the suffix parameter is ignored.
-    # heartbeat=True: tell the grill a client is watching, as the vendor app does.
-    client = GrillaClient(refresh_token=entry.data[CONF_REFRESH_TOKEN], heartbeat=True)
+    # Opt-in heartbeat: tell the grill a client is watching, as the vendor app does.
+    # Original (v1) controllers stop sending state without it.
+    client = GrillaClient(
+        refresh_token=entry.data[CONF_REFRESH_TOKEN],
+        heartbeat=entry.options.get(CONF_HEARTBEAT, False),
+    )
 
     @callback
     def _on_auth_failed() -> None:

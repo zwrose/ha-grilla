@@ -7,7 +7,13 @@ from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResultType
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.grilla.const import CONF_EMAIL, CONF_MODELS, CONF_REFRESH_TOKEN, DOMAIN
+from custom_components.grilla.const import (
+    CONF_EMAIL,
+    CONF_HEARTBEAT,
+    CONF_MODELS,
+    CONF_REFRESH_TOKEN,
+    DOMAIN,
+)
 
 
 def _client(ok=True, sub="sub-123"):
@@ -162,6 +168,26 @@ async def test_options_flow_stores_model(hass):
         await hass.async_block_till_done()
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert entry.options[CONF_MODELS] == {"sx1": "Silverbac XL"}
+    assert entry.options[CONF_HEARTBEAT] is False  # off unless the user turns it on
+
+
+async def test_options_flow_turns_on_heartbeat(hass):
+    entry = MockConfigEntry(
+        domain=DOMAIN, data={CONF_REFRESH_TOKEN: "RE", CONF_EMAIL: "e@x"}, unique_id="sub-123"
+    )
+    entry.add_to_hass(hass)
+    with patch("custom_components.grilla.GrillaClient", return_value=_setup_client()) as cls:
+        await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+        result = await hass.config_entries.options.async_init(entry.entry_id)
+        result = await hass.config_entries.options.async_configure(
+            result["flow_id"], {CONF_HEARTBEAT: True}
+        )
+        await hass.async_block_till_done()
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert entry.options[CONF_HEARTBEAT] is True
+    # Saving options reloads the entry, which reconnects with the heartbeat on.
+    assert cls.call_args.kwargs["heartbeat"] is True
 
 
 async def test_user_flow_already_configured_aborts(hass):

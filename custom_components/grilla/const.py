@@ -8,6 +8,8 @@ PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.EVENT]
 CONF_REFRESH_TOKEN = "refresh_token"
 CONF_EMAIL = "email"
 CONF_MODELS = "models"  # options: {grill_id: friendly_model_name}
+# options: send the app's client heartbeat (original controllers stop reporting without it)
+CONF_HEARTBEAT = "heartbeat"
 
 # Display names for the model picker (app-connected Grilla models). The picker also
 # accepts a free-text custom value, so this list need not be exhaustive.
