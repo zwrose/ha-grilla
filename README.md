@@ -59,11 +59,12 @@ and Chimp, plus Kong and Pie-Ro, have one probe port.
 
 ## Tested hardware
 
-So far this integration has been verified against a **single grill**:
+So far this integration has been verified against **two grills**:
 
 | Model | Controller | Firmware |
 | --- | --- | --- |
 | Grilla Silverbac 2.0 XL Built-In | Alpha Connect 2.0 | 1.0.70 |
+| Grilla Silverbac (original) | Alpha Connect | 1.0.8 |
 
 Grilla's other connected grills use the same Alpha Connect cloud service, so they
 **should** work too — but that hasn't been confirmed. **If you own a different
