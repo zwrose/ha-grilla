@@ -81,8 +81,12 @@ This invariant is tested in `tests/test_sensor.py` and `tests/test_binary_sensor
 
 ## Dev setup
 
+Use Python 3.14, the version CI runs. Current Home Assistant needs it; on an older
+Python, pip quietly installs an old Home Assistant and the gates pass against the wrong
+version.
+
 ```bash
-python3 -m venv .venv
+python3.14 -m venv .venv
 .venv/bin/pip install homeassistant pytest pytest-homeassistant-custom-component ruff pyright aiogrilla
 # (to co-develop the library too, install it editable instead: pip install -e /path/to/aiogrilla)
 ```
@@ -92,7 +96,7 @@ python3 -m venv .venv
 All four must pass cleanly before committing or opening a PR:
 
 ```bash
-.venv/bin/pytest -q          # run the test suite (41 tests, no live network)
+.venv/bin/pytest -q          # run the test suite (no live network)
 .venv/bin/ruff check .       # lint (includes banned-api enforcement)
 .venv/bin/ruff format --check .  # formatting
 .venv/bin/pyright            # type-check

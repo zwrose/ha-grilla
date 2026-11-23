@@ -28,7 +28,7 @@ jobs:
           # installs an old Home Assistant, and the tests miss its newer deprecations.
           python-version: "3.14"
       # aiogrilla is the pinned library dependency (kept in sync with manifest.json).
-      - run: pip install homeassistant pytest pytest-homeassistant-custom-component ruff pyright "aiogrilla>=0.1.1"
+      - run: pip install homeassistant pytest pytest-homeassistant-custom-component ruff pyright "aiogrilla>=0.2.4"
       - run: ruff check .
       - run: ruff format --check .
       - run: pyright

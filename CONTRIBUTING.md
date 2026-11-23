@@ -6,12 +6,14 @@ integration for Grilla Grills Alpha Connect smokers.
 ## Development setup
 
 This integration depends on the [aiogrilla](https://github.com/zwrose/aiogrilla)
-library. A typical local setup:
+library. A typical local setup, using Python 3.14 (the version CI runs — on an older
+Python, pip quietly installs an old Home Assistant and the checks pass against the wrong
+version):
 
 ```bash
 git clone https://github.com/zwrose/ha-grilla.git
 cd ha-grilla
-python -m venv .venv
+python3.14 -m venv .venv
 .venv/bin/pip install homeassistant pytest pytest-homeassistant-custom-component ruff pyright
 .venv/bin/pip install aiogrilla   # or an editable checkout of a local aiogrilla
 ```
