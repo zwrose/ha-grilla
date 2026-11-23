@@ -6,9 +6,10 @@ from typing import TYPE_CHECKING, Any
 
 import voluptuous as vol
 from aiogrilla import GrillaAuthError, GrillaClient, GrillaConnectionError
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlow
+from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlowWithReload
 from homeassistant.core import callback
 from homeassistant.helpers import selector
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import CONF_EMAIL, CONF_MODELS, CONF_REFRESH_TOKEN, DOMAIN, GRILLA_MODELS
 from .helpers import model_name_for, resolve_model_name
@@ -76,7 +77,7 @@ class GrillaConfigFlow(ConfigFlow, domain=DOMAIN):
         """Handle the initial user step (interactive login), then go to model selection."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            client = GrillaClient()
+            client = GrillaClient(session=async_get_clientsession(self.hass))
             try:
                 refresh = await client.async_login_with_password(
                     user_input[CONF_EMAIL], user_input["password"]
@@ -128,7 +129,7 @@ class GrillaConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
         entry = self._get_reauth_entry()
         if user_input is not None:
-            client = GrillaClient()
+            client = GrillaClient(session=async_get_clientsession(self.hass))
             try:
                 refresh = await client.async_login_with_password(
                     entry.data[CONF_EMAIL], user_input["password"]
@@ -161,8 +162,8 @@ class GrillaConfigFlow(ConfigFlow, domain=DOMAIN):
         return GrillaOptionsFlow()
 
 
-class GrillaOptionsFlow(OptionsFlow):
-    """Let the user override each grill's displayed model name."""
+class GrillaOptionsFlow(OptionsFlowWithReload):
+    """Let the user override each grill's displayed model name (reloads on save)."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Show/store the per-grill model overrides (same picker as onboarding)."""

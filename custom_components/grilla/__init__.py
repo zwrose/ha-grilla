@@ -8,6 +8,7 @@ import logging
 from aiogrilla import GrillaAuthError, GrillaClient, GrillaConnectionError
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import CONF_REFRESH_TOKEN, PLATFORMS
 from .coordinator import GrillaCoordinator
@@ -19,16 +20,14 @@ _LOGGER = logging.getLogger(__name__)
 _CONNECT_RETRY_DELAY_S = 30.0
 
 
-async def _async_update_listener(hass: HomeAssistant, entry: GrillaConfigEntry) -> None:
-    """Reload the entry when its options change."""
-    await hass.config_entries.async_reload(entry.entry_id)
-
-
 async def async_setup_entry(hass: HomeAssistant, entry: GrillaConfigEntry) -> bool:
     """Set up Grilla from a config entry."""
     # No client_suffix: since aiogrilla 0.2.4 the MQTT client id is fixed by the vendor's
     # IoT policy (the Cognito identity UUID) and the suffix parameter is ignored.
-    client = GrillaClient(refresh_token=entry.data[CONF_REFRESH_TOKEN])
+    # Share HA's aiohttp session (the client only closes a session it created itself).
+    client = GrillaClient(
+        refresh_token=entry.data[CONF_REFRESH_TOKEN], session=async_get_clientsession(hass)
+    )
 
     @callback
     def _on_auth_failed() -> None:
@@ -56,7 +55,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: GrillaConfigEntry) -> bo
         client.on_availability(grill.id, coord.handle_availability)
 
     entry.runtime_data = GrillaRuntimeData(client=client, grills=grills, coordinators=coordinators)
-    entry.async_on_unload(entry.add_update_listener(_async_update_listener))
 
     # Create the entities now -- they start 'unavailable' (availability mirrors the grill
     # connection) and come alive as telemetry arrives -- so the device's entities appear
