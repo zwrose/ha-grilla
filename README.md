@@ -66,6 +66,10 @@ So far this integration has been verified against **two grills**:
 | Grilla Silverbac 2.0 XL Built-In | Alpha Connect 2.0 | 1.0.70 |
 | Grilla Silverbac (original) | Alpha Connect | 1.0.8 |
 
+The original Silverbac currently sends data only while the Grilla app is open on a
+phone. Keeping it reporting without the app is being worked on in
+[aiogrilla#37](https://github.com/zwrose/aiogrilla/pull/37).
+
 Grilla's other connected grills use the same Alpha Connect cloud service, so they
 **should** work too — but that hasn't been confirmed. **If you own a different
 model, please give it a try and [open an issue](https://github.com/zwrose/ha-grilla/issues/new?template=compatibility_report.yml)
